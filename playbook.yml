@@ -3,24 +3,8 @@
   connection: local
   gather_facts: false
   tasks:
-  - digital_ocean: >
-      state=present
-      command=droplet
-      name=fawadtest1
-      unique_name=yes
-      image_id=6372108
-      size_id=66
-      region_id=4
-      ssh_key_ids=584065
-    register: fawadtest1
-  - debug: msg="ID is {{ fawadtest1.droplet.id }}"
-  - debug: msg="IP is {{ fawadtest1.droplet.ip_address }}"
-  - digital_ocean_domain: >
-     state=present
-     name="fdb.do.fawad.net"
-     ip={{ fawadtest1.droplet.ip_address }}
-  - wait_for: host=fdb.do.fawad.net port=22
-- hosts: all
+  - include: tasks/provision_do.yml server=fdb.do.fawad.net
+- hosts: servers
   tasks:
   - name: Install packages
     yum: name={{ item }} state=present
@@ -30,3 +14,7 @@
       - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/sql-layer/2.0.2/fdb-sql-layer-2.0.2-1.el6.noarch.rpm
       - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/sql-layer/2.0.2/fdb-sql-layer-client-tools-2.0.2-1.el6.noarch.rpm
       - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/document-layer/1.0.2/fdb-document-layer-1.0.2-1.el6.x86_64.rpm
+  - name: Listen on public address
+    replace: dest=/etc/foundationdb/document/document.conf regexp='127.0.0.1' replace='0.0.0.0'
+  - name: Restart document layer
+    service: name=fdb-document-layer state=restarted

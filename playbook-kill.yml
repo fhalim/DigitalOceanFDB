@@ -4,7 +4,8 @@
   tasks:
   - digital_ocean: >
       state=deleted
-      name=fawadtest1
+      name={{ item | regex_replace('\.', '-') }}
       unique_name=true
       command=droplet
       wait_timeout=60
+    with_items: groups['all']
