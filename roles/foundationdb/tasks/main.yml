@@ -1,0 +1,12 @@
+- name: Install packages
+  yum: name={{ item }} state=present
+  with_items:
+    - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/key-value-store/2.0.10/foundationdb-clients-2.0.10-1.x86_64.rpm
+    - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/key-value-store/2.0.10/foundationdb-server-2.0.10-1.x86_64.rpm
+    - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/sql-layer/2.0.2/fdb-sql-layer-2.0.2-1.el6.noarch.rpm
+    - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/sql-layer/2.0.2/fdb-sql-layer-client-tools-2.0.2-1.el6.noarch.rpm
+    - https://foundationdb.com/downloads/f-iaxuaxatxotb/I_accept_the_FoundationDB_Community_License_Agreement/document-layer/1.0.2/fdb-document-layer-1.0.2-1.el6.x86_64.rpm
+- name: Listen on public address
+  replace: dest=/etc/foundationdb/document/document.conf regexp='127.0.0.1' replace='0.0.0.0'
+- name: Restart document layer
+  service: name=fdb-document-layer state=restarted
