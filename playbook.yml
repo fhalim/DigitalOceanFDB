@@ -5,7 +5,7 @@
   connection: local
   gather_facts: false
   roles:
-    - digital_ocean
+    - fawad.digital_ocean
 - hosts: servers
   roles:
     - foundationdb
